@@ -5,10 +5,13 @@ using UnityEngine;
 public class Blade : MonoBehaviour {
 
     public GameObject bladeTrailPrefab;
+    public float minCurrentVelocity = .001f;
 
     bool isCutting = false;
 
     GameObject currentBlateTrail;
+
+    Vector2 previousPos;
 
     Rigidbody2D rb;
     Camera cam;
@@ -37,7 +40,19 @@ public class Blade : MonoBehaviour {
 
     void UpdateCut()
     {
-        rb.position = cam.ScreenToWorldPoint( Input.mousePosition);
+        Vector2 newPos = cam.ScreenToWorldPoint(Input.mousePosition);
+        rb.position = newPos;
+        
+        float velocity = (newPos - previousPos).magnitude / Time.deltaTime;
+        if (velocity > minCurrentVelocity)
+        {
+            cc2d.enabled = true;
+        }
+        else
+        {
+            cc2d.enabled = false;
+        }
+        previousPos = newPos;
     }
 
     void StartCutting()
@@ -45,8 +60,10 @@ public class Blade : MonoBehaviour {
         isCutting = true;
         rb.position = cam.ScreenToWorldPoint(Input.mousePosition);
         transform.position = rb.position;
+        //previousPos = cam.ScreenToWorldPoint(Input.mousePosition);
         currentBlateTrail = Instantiate(bladeTrailPrefab,transform);
-        cc2d.enabled = !cc2d.isActiveAndEnabled;
+        //cc2d.enabled = !cc2d.isActiveAndEnabled;
+        cc2d.enabled = false;
     }
 
     void StopCutting()
@@ -54,6 +71,7 @@ public class Blade : MonoBehaviour {
         isCutting = false;
         currentBlateTrail.transform.SetParent(null);
         Destroy(currentBlateTrail,2f);
-        cc2d.enabled = !cc2d.isActiveAndEnabled;
+        //cc2d.enabled = !cc2d.isActiveAndEnabled;
+        cc2d.enabled = false;
     }
 }
