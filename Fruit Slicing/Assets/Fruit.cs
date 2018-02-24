@@ -8,10 +8,12 @@ public class Fruit : MonoBehaviour {
     public float startForce = 12f;
 
     Rigidbody2D rb;
+    Blade blade;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        blade = GetComponent<Blade>();
         rb.AddForce(transform.up * startForce, ForceMode2D.Impulse);
         StartCoroutine(Wait());
     }
@@ -30,11 +32,16 @@ public class Fruit : MonoBehaviour {
         {
             
             Vector2 direction = (collision.transform.position - transform.position).normalized;
-
             Quaternion rotation = Quaternion.LookRotation(direction);
-            //rotation.z -= 90f;
 
-            GameObject fruitSlice = Instantiate(fruitSlicedPrefab,transform.position,rotation);
+            Vector2 normalize = Blade.direction;
+            Quaternion rotation2 = Quaternion.LookRotation(normalize);
+            
+            //try to get rigidbody on childs
+            GameObject fruitSlice = Instantiate(fruitSlicedPrefab,transform.position,rotation2);
+            Component[] trans = fruitSlice.GetComponents(typeof(Rigidbody));
+
+            Debug.Log(trans.Length);
             Destroy(gameObject);
             Destroy(fruitSlice,5f);
         }

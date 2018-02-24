@@ -7,6 +7,8 @@ public class Blade : MonoBehaviour {
     public GameObject bladeTrailPrefab;
     public float minCurrentVelocity = .001f;
 
+    public static Vector2 direction;
+
     bool isCutting = false;
 
     GameObject currentBlateTrail;
@@ -42,7 +44,9 @@ public class Blade : MonoBehaviour {
     {
         Vector2 newPos = cam.ScreenToWorldPoint(Input.mousePosition);
         rb.position = newPos;
-        
+
+        direction = (newPos - previousPos).normalized;
+
         float velocity = (newPos - previousPos).magnitude / Time.deltaTime;
         if (velocity > minCurrentVelocity)
         {
